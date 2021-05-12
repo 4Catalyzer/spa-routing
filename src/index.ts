@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 import type { Optional } from 'utility-types';
+
 import type { Params, PathParams, ReplaceParams } from './params';
 
 export type { Optional, Params, PathParams, ReplaceParams };
@@ -16,13 +18,6 @@ export interface RouteFactory<
   (params?: T): P;
   config: C;
 }
-
-// function* matchAll(str: string, regexp: RegExp) {
-//   let match;
-//   while ((match = regexp.exec(str)) !== null) {
-//     yield match;
-//   }
-// }
 
 /**
  * Creates a Route factory from a string path
@@ -83,7 +78,6 @@ export function join<T extends RouteFactory, U extends RouteFactory | string>(
   prefix: T,
   suffix: U,
 ) {
-  type P = Record<PathParams<RConfig>, string>;
   type R = RouteParams<T> & RouteParams<U>;
   type RConfig = `${Config<T>}/${Config<U>}`;
 
@@ -105,16 +99,13 @@ export function join<T extends RouteFactory, U extends RouteFactory | string>(
       };
 }
 
-type A = 'foo' | 'bar';
-type O = Extract<A, 'foo' | 'baz'>;
-
 export function partial<
   Route extends RouteFactory,
   P extends RouteParams<Route>,
   K extends string,
 >(
   route: Route,
-  partialParams: { [P in K]?: string } & Record<string, string>,
+  partialParams: { [PP in K]?: string } & Record<string, string>,
 ) {
   type Overlap = Extract<keyof P, K>;
   type RConfig = Config<Route>;
@@ -142,3 +133,27 @@ export function partial<
         }
     : typeof route;
 }
+
+export type PartialRoute<
+  Route extends RouteFactory,
+  ParamKeys extends string,
+> = Route extends RouteFactory<infer P, string, infer RConfig>
+  ? Extract<keyof P, ParamKeys> extends never
+    ? typeof route
+    : P extends Param<Extract<keyof P, ParamKeys>>
+    ? keyof Omit<P, Extract<keyof P, ParamKeys>> extends never
+      ? {
+          // in which case make the whole parameter optional
+          <S extends { [PK in Extract<keyof P, ParamKeys>]: P[PK] }>(
+            params?: Partial<S>,
+          ): ReplaceParams<RConfig, S & P>;
+          config: RConfig;
+        }
+      : {
+          <S extends P>(
+            params: Optional<S, Extract<keyof P, ParamKeys>>,
+          ): ReplaceParams<RConfig, S & P>;
+          config: RConfig;
+        }
+    : typeof route
+  : never;
