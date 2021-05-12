@@ -1,5 +1,7 @@
-import { Optional } from 'utility-types';
-import { Params, PathParams, ReplaceParams } from './params';
+import type { Optional } from 'utility-types';
+import type { Params, PathParams, ReplaceParams } from './params';
+
+export type { Optional, Params, PathParams, ReplaceParams };
 
 /* Creates a an object type with _at least_ the key TKey */
 export type Param<TKey extends string, TValue = string> = {
@@ -140,39 +142,3 @@ export function partial<
         }
     : typeof route;
 }
-
-// type IsUndefined<T, U> = T extends undefined | null ? never : U;
-// type OptionalKeys<T> = keyof {
-//   [P in keyof T as T[P] extends undefined | null ? P : never]: T[P];
-// };
-// /**
-//  * Takes a set of Route url factories and makes a specific param optional
-//  */
-// export type MakeParamOptional<
-//   TRoutes extends Record<string, RouteFactory>,
-//   TKey extends string,
-// > = {
-//   [Key in keyof TRoutes]: Parameters<TRoutes[Key]>[0] extends Param<TKey, any>
-//     ? // check if the param is the _only_ param
-//       keyof Omit<
-//         Parameters<TRoutes[Key]>[0],
-//         TKey | OptionalKeys<Parameters<TRoutes[Key]>[0]>
-//       > extends never
-//       ? {
-//           // in which case make the whole parameter optional
-//           <P extends Parameters<TRoutes[Key]>[0]>(params?: P): ReplaceParams<
-//             TRoutes[Key]['config'],
-//             P
-//           >;
-//           config: TRoutes[Key]['config'];
-//         }
-//       : {
-//           // otherwise make the param key optional
-//           <P extends Required<Parameters<TRoutes[Key]>[0]>>(
-//             params: { [K in keyof Optional<P, TKey>]: P[K] },
-//           ): ReplaceParams<TRoutes[Key]['config'], { [K in keyof P]-?: P[K] }>;
-//           config: TRoutes[Key]['config'];
-//         }
-//     : // If the route doesn't contain this param leave it alone
-//       TRoutes[Key];
-// };
