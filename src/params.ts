@@ -9,6 +9,7 @@ export type PathParams<Path extends string> =
 
 export type ReplaceParams<
   Path extends string,
+  // eslint-disable-next-line @typescript-eslint/ban-types
   Sub extends Record<string, string> = {},
 > = Path extends `:${infer P}/${infer Rest}`
   ? `${Sub[P]}/${ReplaceParams<Rest, Sub>}`

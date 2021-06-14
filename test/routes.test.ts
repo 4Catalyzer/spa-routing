@@ -1,4 +1,5 @@
-import { join, route, root, partial } from '../src';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { join, partial, root, route } from '../src';
 
 describe('route utils', () => {
   const widgetsRoot = join(root, 'widgets');
@@ -7,15 +8,15 @@ describe('route utils', () => {
   const widgetItemDetailRoute = join(widgetItemRoute, ':subId');
 
   it('should work', () => {
-    // $ExpectType '/widgets'
-    let w1 = widgetsRoot();
+    // $ExpectType "/widgets"
+    const w1 = widgetsRoot();
     expect(w1).toEqual('/widgets');
 
-    // $ExpectType '/widgets/40'
-    let w2 = widgetRoute({ widgetId: '40' } as const);
+    // $ExpectType "/widgets/40"
+    const w2 = widgetRoute({ widgetId: '40' } as const);
     expect(w2).toEqual('/widgets/40');
 
-    let w3 = widgetItemDetailRoute({ widgetId: '40', subId: 'id' } as const);
+    const w3 = widgetItemDetailRoute({ widgetId: '40', subId: 'id' } as const);
 
     expect(w3).toEqual('/widgets/40/items/id');
   });
@@ -25,11 +26,6 @@ describe('route utils', () => {
       widgetId: 'foo',
       subId: 'hey',
     });
-
-    type f = Extract<
-      keyof Record<'widgetId' | 'subId', string>,
-      'widgetId' | 'asdfasf'
-    >;
 
     // no ts error for other params
     const e1 = partial(widgetItemDetailRoute, { foo: 'bar' });
@@ -64,13 +60,13 @@ describe('route utils', () => {
       asfasf: 'hmm',
     });
 
-    // $ExpectError
+    // $ExpectError missing params
     const er1 = optional();
 
-    // $ExpectError
+    // $ExpectError missing key
     const er2 = optional({});
 
-    // $ExpectError
+    // $ExpectError an unknown param
     const er3 = optional({ foo: 'bar' });
 
     // should be better
