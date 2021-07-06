@@ -1,7 +1,5 @@
 # spa-routing
 
-Route helpers that just make sense.
-
 [spa-routing](https://github.com/4Catalyzer/spa-routing) is a heavily-typed set of helpers for creating reliable pathnames
 
 ## Usage
