@@ -36,6 +36,8 @@ export interface RouteFactory<
  *
  * projectRoute({ slug: 'my-org', projectId: '1'}) // '/organizations/my-org/projects/1/'
  * ```
+ *
+ * @returns a route factory
  */
 export function route<S extends string>(path: S) {
   function compiledRoute(params: any) {
@@ -143,7 +145,7 @@ export function join<T extends RouteFactory, U extends RouteFactory | string>(
  * ```
  * @param route
  * @param partialParams
- * @returns
+ * @returns a route factory
  */
 export function partial<
   Route extends RouteFactory,
