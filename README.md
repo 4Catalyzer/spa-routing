@@ -1,12 +1,67 @@
 # spa-routing
 
+Create pathnames for your router with confidence!
 [spa-routing](https://github.com/4Catalyzer/spa-routing) is a heavily-typed set of helpers for creating reliable pathnames
 
-## Usage
+## The problem
 
-- [route](#route)
-- [join](#join)
-- [partial](#partial)
+Let's say you're creating a routing tree for your new project - it might look something like this 
+
+```ts
+import { createBrowserRouter, Link } from 'react-router-dom';
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <div>
+        <Link to="about">About Us</Link>
+      </div>
+    ),
+  },
+  {
+    path: "about",
+    element: <div>About</div>,
+  },
+]);
+```
+
+Notice how the `path` and `to` attribute in `Link` are just plain strings? These are the painpoints where you might lose type safety and navigate the user to a random path. How wonderful would it be if you could do that and not leave the coziness of Typescript? Just create a file
+
+```ts
+// routes.ts
+import { join, root } from "@4c/spa-routing";
+
+export const rootRoute = join(root, ""); // === '/'
+
+export const homeRoute = join(root, "home"); // === '/home'
+export const setupRoute = join(root, "setup"); // === '/setup'
+export const aboutRoute = join(root, "about"); // === '/about'
+```
+and then simply reference those in your router tree
+
+```ts
+import { createBrowserRouter, Link } from 'react-router-dom';
+import { aboutRoute } from "./routes";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <div>
+        <Link to={aboutRoute()}>About Us</Link>
+      </div>
+    ),
+  },
+  {
+    path: aboutRoute(),
+    element: <div>About</div>,
+  },
+]);
+```
+
+
+## Functions
 
 ### `route(path: S extends String)`
 
@@ -61,3 +116,4 @@ partialItemId(); // '/items/1/widgets'
 // you can still override the default id desired
 partialItemId({ itemId: '2' }); // '/items/2/widgets'
 ```
+
